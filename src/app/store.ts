@@ -1,9 +1,15 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import optionsReducer from '../features/generator/optionsSlice';
+import breedListReducer from '../features/generator/breedListSlice';
+import imageListReducer from '../features/generator/imageListSlice';
+import showBrodalReducer from '../features/generator/showBrodalSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    options: optionsReducer,
+    breedList: breedListReducer,
+    imageList: imageListReducer,
+    showBrodal: showBrodalReducer,
   },
 });
 

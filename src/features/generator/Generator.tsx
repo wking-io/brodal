@@ -12,14 +12,22 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
+import Paper from '@material-ui/core/Paper';
+import Modal from '@material-ui/core/Modal';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
 
 // Local
 import { AsyncResourceState, Resource } from '../../app/types';
-import { BreedOptionRow, selectOptions, addRow, setBreed, setSubBreed, setImageCount, BreedOptionsState } from './optionsSlice';
+import { BreedOptionRow, selectOptions, addRow, setBreed, setSubBreed, setImageCount, isEmpty } from './optionsSlice';
 import { fetchBreedList, selectBreedList, BreedList } from './breedListSlice';
+import { fetchImageList, selectImageList, ImageList } from './imageListSlice';
+import { toggleBrodal, selectShowBrodal } from './showBrodalSlice';
 import { assertExhaustive } from '../../utils/index';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   optionRow: {
@@ -34,6 +42,17 @@ const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
+  },
+  gridList: {
+    width: 500,
+    height: 450,
+  },
 }));
 
 const withResource = (Component: React.ElementType) => <T,>({ resource, ...props }: { resource: Resource<T> }) => {
@@ -42,32 +61,42 @@ const withResource = (Component: React.ElementType) => <T,>({ resource, ...props
 }
 
 const BreedOptionsList = withResource(OptionsList);
+const BreedImageGrid = withResource(ImageGrid);
 
 export function Generator() {
   const dispatch = useAppDispatch();
   const breedList = useAppSelector(selectBreedList);
+  const breedOptions = useAppSelector(selectOptions);
 
-  const promise = useMemo(() => {
-    return dispatch(fetchBreedList);
+  const breedListPromise = useMemo(() => {
+    return dispatch(fetchBreedList());
   }, [dispatch]);
 
   const breedListResource = useMemo<Resource<BreedList>>(() => ({
     read(): BreedList {
       if (breedList.status === AsyncResourceState.Loading) {
-        throw promise;
+        throw breedListPromise;
       } else if (breedList.status === AsyncResourceState.Failed) {
         throw new Error('Failed to load the list of breeds');
       }
 
       return breedList.list;
     }
-  }), [breedList.status, breedList.list, promise]);
+  }), [breedList.status, breedList.list, breedListPromise]);
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h3" component="h1">Brodal</Typography>
-      <BreedOptionsList resource={breedListResource} />
-    </Container>
+      <Paper elevation={3} variant="outlined">
+        <Typography variant="h3" component="h1">Brodal</Typography>
+        <React.Suspense fallback="Breed List is loading">
+          <BreedOptionsList resource={breedListResource} />
+          <Button size="large" disabled={isEmpty(breedOptions)}>
+            Generate Images
+        </Button>
+        </React.Suspense>
+      </Paper>
+      <Brodal />
+    </Container >
   );
 }
 
@@ -208,5 +237,60 @@ function OptionSelect({ formKey = 'new', handleChange, options, label, value = '
         ))}
       </Select>
     </FormControl>
+  );
+}
+
+function Brodal() {
+  const dispatch = useAppDispatch();
+  const imageList = useSelector(selectImageList);
+  const breedOptions = useSelector(selectOptions);
+  const isOpen = useAppSelector(selectShowBrodal)
+
+  const imageListPromise = useMemo(() => {
+    return dispatch(fetchImageList(breedOptions));
+  }, [dispatch]);
+
+  const imageListResource = useMemo<Resource<ImageList>>(() => ({
+    read(): ImageList {
+      if (imageList.status === AsyncResourceState.Loading) {
+        throw imageListPromise;
+      } else if (imageList.status === AsyncResourceState.Failed) {
+        throw new Error('Failed to load the list of images');
+      }
+
+      return imageList.list;
+    }
+  }), [imageList.status, imageList.list, imageListPromise]);
+
+  return (
+    <Modal
+      open={isOpen}
+      onClose={() => dispatch(toggleBrodal())}
+      aria-labelledby="simple-modal-title"
+      aria-describedby="simple-modal-description"
+    >
+      <React.Suspense fallback="Waiting for images...">
+        <BreedImageGrid resource={imageListResource} />
+      </React.Suspense>
+    </Modal>
+  )
+}
+
+type ImageGridProps = {
+  data: string[];
+}
+
+function ImageGrid<T>({ data }: ImageGridProps<T>) {
+  const classes = useStyles();
+  return (
+    <div className={classes.root}>
+      <GridList cellHeight={160} className={classes.gridList} cols={3}>
+        {data.map((imageUrl) => (
+          <GridListTile key={imageUrl} cols={1}>
+            <img src={imageUrl} alt="dog image" />
+          </GridListTile>
+        ))}
+      </GridList>
+    </div>
   );
 }

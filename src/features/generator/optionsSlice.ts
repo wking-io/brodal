@@ -28,14 +28,13 @@ export interface BreedOptionPayload {
 
 const initialState: BreedOptionsState = [{ type: 'EMPTY' }];
 
-function addOptionRow(state: BreedOptionsState): BreedOptionsState {
-  return [...state, { type: 'EMPTY' }];
+function addOptionRow(state: BreedOptionsState) {
+  state.push({ type: 'EMPTY' });
 }
 
 function withOptionRow(updater: (optionRow: BreedOptionRow, value: string) => BreedOptionRow) {
-  return function(state: BreedOptionsState, { payload }: PayloadAction<BreedOptionPayload>): BreedOptionsState {
+  return function(state: BreedOptionsState, { payload }: PayloadAction<BreedOptionPayload>) {
     state[payload.index] = updater(state[payload.index], payload.value);
-    return [ ...state ];
   };
 }
 
@@ -95,4 +94,7 @@ export const optionsSlice = createSlice({
 
 export const { addRow, setBreed, setSubBreed, setImageCount } = optionsSlice.actions;
 export const selectOptions = (state: RootState) => state.options;
+export function isEmpty(list: BreedOptionsState): boolean {
+  return list.length === 0 || (list.length === 1 && list[0].type === "EMPTY")
+}
 export default optionsSlice.reducer

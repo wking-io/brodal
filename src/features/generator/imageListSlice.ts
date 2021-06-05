@@ -43,5 +43,5 @@ export const imageListSlice = createSlice({
 });
 
 export const { setImageList } = imageListSlice.actions;
-export const selectOptions = (state: RootState) => state.options;
+export const selectImageList = (state: RootState) => state.imageList;
 export default imageListSlice.reducer

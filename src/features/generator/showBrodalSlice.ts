@@ -10,11 +10,11 @@ export const showBrodalSlice = createSlice({
   initialState,
   reducers: {
     toggleBrodal(state) {
-      return !state;
+      state = !state;
     }
   },
 });
 
 export const { toggleBrodal } = showBrodalSlice.actions;
-export const selectOptions = (state: RootState) => state.options;
+export const selectShowBrodal = (state: RootState) => state.showBrodal;
 export default showBrodalSlice.reducer

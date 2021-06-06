@@ -8,7 +8,6 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
@@ -67,6 +66,7 @@ export function Generator() {
   const dispatch = useAppDispatch();
   const breedList = useAppSelector(selectBreedList);
   const breedOptions = useAppSelector(selectOptions);
+  const isOpen = useAppSelector(selectShowBrodal);
 
   const breedListPromise = useMemo(() => {
     return dispatch(fetchBreedList());
@@ -90,12 +90,12 @@ export function Generator() {
         <Typography variant="h3" component="h1">Brodal</Typography>
         <React.Suspense fallback="Breed List is loading">
           <BreedOptionsList resource={breedListResource} />
-          <Button size="large" disabled={isEmpty(breedOptions)}>
+          <Button size="large" disabled={isEmpty(breedOptions)} onClick={() => dispatch(toggleBrodal())}>
             Generate Images
         </Button>
         </React.Suspense>
       </Paper>
-      <Brodal />
+      {isOpen && <Brodal />}
     </Container >
   );
 }
@@ -150,6 +150,7 @@ function OptionRow({ data, row, rowIndex }: OptionRowProps) {
               variant="outlined"
               disabled={true}
               onChange={({ target }) => dispatch(setImageCount({ value: target.value, index: rowIndex }))}
+              value={0}
             />
           </Grid>
         </Grid>
@@ -207,7 +208,6 @@ function OptionRow({ data, row, rowIndex }: OptionRowProps) {
 
     default:
       assertExhaustive(row);
-      break;
   }
 }
 
@@ -244,7 +244,7 @@ function Brodal() {
   const dispatch = useAppDispatch();
   const imageList = useSelector(selectImageList);
   const breedOptions = useSelector(selectOptions);
-  const isOpen = useAppSelector(selectShowBrodal)
+  const isOpen = useAppSelector(selectShowBrodal);
 
   const imageListPromise = useMemo(() => {
     return dispatch(fetchImageList(breedOptions));
@@ -280,7 +280,7 @@ type ImageGridProps = {
   data: string[];
 }
 
-function ImageGrid<T>({ data }: ImageGridProps<T>) {
+function ImageGrid<T>({ data }: ImageGridProps) {
   const classes = useStyles();
   return (
     <div className={classes.root}>

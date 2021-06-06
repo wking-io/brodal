@@ -2,6 +2,7 @@ import { assertExhaustive } from '../../utils';
 import { BreedList } from './breedListSlice';
 import { ImageList } from './imageListSlice';
 import { BreedOptionRow, BreedOptionsState } from './optionsSlice';
+import { shuffle } from '../../utils/index';
 
 async function mapOptions(optionRow: BreedOptionRow): 
 Promise<ImageList> {
@@ -9,7 +10,7 @@ Promise<ImageList> {
     case 'EMPTY':
       return [];
     case 'BREED_ALL':
-      const breedResponse = await fetch(`https://dog.ceo/api/${optionRow.breed}/hound/images/random/${optionRow.count}`);
+      const breedResponse = await fetch(`https://dog.ceo/api/breed/${optionRow.breed}/images/random/${optionRow.count}`);
 
       if (!breedResponse.ok) {
         console.log(`No breeds found for ${breedResponse.url}`);
@@ -36,7 +37,7 @@ Promise<ImageList> {
 
 export async function getImageList(options: BreedOptionsState): Promise<ImageList> {
   try {
-    return Promise.all(options.map(mapOptions)).then((lists) => lists.flat());
+    return Promise.all(options.map(mapOptions)).then((lists) => shuffle(lists.flat()));
   } catch (e) {
     throw new Error('Error fetching breed images');
   }

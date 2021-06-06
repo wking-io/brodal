@@ -10,7 +10,7 @@ export const showBrodalSlice = createSlice({
   initialState,
   reducers: {
     toggleBrodal(state) {
-      state = !state;
+      return !state;
     }
   },
 });

@@ -18,7 +18,6 @@ import {
   Modal,
   GridListTile,
   GridList,
-  Hidden
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
@@ -35,7 +34,6 @@ import { fetchImageList, selectImageList, ImageList } from './imageListSlice';
 import { toggleBrodal, selectShowBrodal } from './showBrodalSlice';
 import { assertExhaustive } from '../../utils/index';
 import { useSelector } from 'react-redux';
-import classes from '*.module.css';
 
 const useStyles = makeStyles((theme) => ({
   container: {

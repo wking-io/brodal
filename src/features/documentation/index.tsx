@@ -50,6 +50,96 @@ export enum BreedOptionState {
 }
 
 // How they are used to define explicit UI state
+function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
+  const classes = useStyles();
+  const dispatch = useAppDispatch();
+  switch (row.type) {
+    case BreedOptionState.Empty:
+      return (
+        <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
+          <Grid className={classes.option} item>
+            <OptionSelect formKey={\`breed-\${rowIndex}\`} options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} />
+          </Grid>
+          <Grid className={classes.option} item>
+            <OptionSelect formKey={\`breed-\${rowIndex}\`} options={[]} disabled={true} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
+          </Grid>
+          <Grid className={classes.option} item>
+            <TextField
+              id="breed-image-count"
+              label="# of Images"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+              disabled={true}
+              onChange={({ target }) => dispatch(setImageCount({ value: target.value, index: rowIndex }))}
+              value={0}
+              size='small'
+              style={{ width: '100%' }}
+            />
+          </Grid>
+        </Grid>
+      );
+
+    case BreedOptionState.BreedAll:
+      return (
+        <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
+          <Grid className={classes.option} item>
+            <OptionSelect formKey={\`breed-\${rowIndex}\`} options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
+          </Grid>
+          <Grid className={classes.option} item>
+            <OptionSelect formKey={\`sub-breed-\${rowIndex}\`} options={["all", ...data[row.breed]]} label="Sub-breed" value="all" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
+          </Grid>
+          <Grid className={classes.option} item>
+            <TextField
+              id="breed-image-count"
+              label="# of Images"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+              onChange={({ target }) => dispatch(setImageCount({ value: target.value, index: rowIndex }))}
+              value={row.count}
+              size='small'
+              style={{ width: '100%' }}
+            />
+          </Grid>
+        </Grid>
+      );
+
+    case BreedOptionState.BreedSub:
+      return (
+        <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
+          <Grid className={classes.option} item>
+            <OptionSelect formKey={\`breed-\${rowIndex}\`} options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
+          </Grid>
+          <Grid className={classes.option} item>
+            <OptionSelect formKey={\`sub-breed-\${rowIndex}\`} options={["all", ...data[row.breed]]} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} value={row.subBreed} />
+          </Grid>
+          <Grid className={classes.option} item>
+            <TextField
+              id="breed-image-count"
+              label="# of Images"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+              onChange={({ target }) => dispatch(setImageCount({ value: target.value, index: rowIndex }))}
+              value={row.count}
+              size='small'
+              style={{ width: '100%' }}
+            />
+          </Grid>
+        </Grid>
+      );
+
+    default:
+      assertExhaustive(row);
+  }
+}
       `} />
       <p style={{ lineHeight: 1.6 }}><em>Bonus: Because of the use of Suspense and ErrorBoundary we don't even need to include loading or error states making the implementation a lot more focused.</em></p>
       <p style={{ lineHeight: 1.6 }}><strong>AsyncResourceStatus</strong></p>

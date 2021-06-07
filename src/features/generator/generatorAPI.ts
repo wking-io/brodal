@@ -1,15 +1,15 @@
 import { assertExhaustive } from '../../utils';
 import { BreedList } from './breedListSlice';
 import { ImageList } from './imageListSlice';
-import { BreedOptionRow, BreedOptionsState } from './optionsSlice';
+import { BreedOptionState, BreedOptionRow, BreedOptionsState } from './optionsSlice';
 import { shuffle } from '../../utils/index';
 
 async function mapOptions(optionRow: BreedOptionRow): 
 Promise<ImageList> {
   switch (optionRow.type) {
-    case 'EMPTY':
+    case BreedOptionState.Empty:
       return [];
-    case 'BREED_ALL':
+    case BreedOptionState.BreedAll:
       const breedResponse = await fetch(`https://dog.ceo/api/breed/${optionRow.breed}/images/random/${optionRow.count}`);
 
       if (!breedResponse.ok) {
@@ -19,7 +19,7 @@ Promise<ImageList> {
 
       const breedResult = await breedResponse.json();
       return breedResult.message;
-    case 'BREED_SUB':
+    case BreedOptionState.BreedSub:
       let response = await fetch(`https://dog.ceo/api/breed/${optionRow.breed}/${optionRow.subBreed}/images/random/${optionRow.count}`);
 
 

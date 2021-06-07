@@ -204,7 +204,6 @@ type OptionRowProps = {
 function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
   const dispatch = useAppDispatch();
   // TODO: Make the fields responsive
-  // TODO: Replace type with Enum
   switch (row.type) {
     case BreedOptionState.Empty:
       return (

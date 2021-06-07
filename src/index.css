@@ -8,7 +8,7 @@ body {
   background-color: #263238;
 }
 
-code {
+code:not(.language-typescript) {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
   background-color: #455a64;

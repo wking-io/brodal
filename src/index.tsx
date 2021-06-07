@@ -1,15 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import pink from '@material-ui/core/colors/pink';
 import './index.css';
 import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: pink['A200'],
+      main: pink['A400'],
+      dark: pink['A700'],
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.2,
+    type: 'dark',
+  },
+});
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

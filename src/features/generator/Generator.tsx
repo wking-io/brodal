@@ -28,7 +28,7 @@ import blueGrey from '@material-ui/core/colors/blueGrey';
 import { ErrorFallback, naiveErrorHandler } from '../../app/errors';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { AsyncResourceState, Resource } from '../../app/types';
-import { BreedOptionRow, selectOptions, addRow, setBreed, setSubBreed, setImageCount, isEmpty } from './optionsSlice';
+import { BreedOptionState, BreedOptionRow, selectOptions, addRow, setBreed, setSubBreed, setImageCount, isEmpty } from './optionsSlice';
 import { fetchBreedList, selectBreedList, BreedList } from './breedListSlice';
 import { fetchImageList, selectImageList, ImageList } from './imageListSlice';
 import { toggleBrodal, selectShowBrodal } from './showBrodalSlice';
@@ -186,7 +186,7 @@ function OptionsList({ data }: { data: BreedList }) {
       {breedOptions.map((optionRow, i, arr) => (
         <div key={`breed-${i}-row`} className={classes.optionRow}>
           <OptionRow data={data} row={optionRow} rowIndex={i} />
-          <IconButton style={{ marginLeft: 16, visibility: arr.length === (i + 1) ? 'visible' : 'hidden' }} aria-label="add row" disabled={optionRow.type === 'EMPTY'} color="primary" onClick={() => dispatch(addRow())}>
+          <IconButton style={{ marginLeft: 16, visibility: arr.length === (i + 1) ? 'visible' : 'hidden' }} aria-label="add row" disabled={optionRow.type === BreedOptionState.Empty} color="primary" onClick={() => dispatch(addRow())}>
             <AddIcon />
           </IconButton>
         </div>
@@ -206,7 +206,7 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
   // TODO: Make the fields responsive
   // TODO: Replace type with Enum
   switch (row.type) {
-    case "EMPTY":
+    case BreedOptionState.Empty:
       return (
         <Grid container spacing={3} alignItems="center" wrap='nowrap'>
           <Grid style={{ flex: 1 }} item>
@@ -234,7 +234,7 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
         </Grid>
       );
 
-    case "BREED_ALL":
+    case BreedOptionState.BreedAll:
       return (
         <Grid container spacing={3} alignItems="center" wrap='nowrap'>
           <Grid style={{ flex: 1 }} item>
@@ -261,7 +261,7 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
         </Grid>
       );
 
-    case "BREED_SUB":
+    case BreedOptionState.BreedSub:
       return (
         <Grid container spacing={3} alignItems="center" wrap='nowrap'>
           <Grid style={{ flex: 1 }} item>

@@ -2,18 +2,24 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { assertExhaustive } from '../../utils/index';
 
+export enum BreedOptionState {
+  Empty,
+  BreedAll,
+  BreedSub,
+}
+
 interface Empty {
-  type: 'EMPTY';
+  type: BreedOptionState.Empty;
 }
 
 interface BreedAll {
-  type: 'BREED_ALL';
+  type: BreedOptionState.BreedAll;
   breed: string;
   count: number;
 }
 
 interface BreedSub {
-  type: 'BREED_SUB';
+  type: BreedOptionState.BreedSub;
   breed: string;
   subBreed: string;
   count: number;
@@ -26,10 +32,10 @@ export interface BreedOptionPayload {
   value: string;
 }
 
-const initialState: BreedOptionsState = [{ type: 'EMPTY' }];
+const initialState: BreedOptionsState = [{ type: BreedOptionState.Empty }];
 
 function addOptionRow(state: BreedOptionsState) {
-  state.push({ type: 'EMPTY' });
+  state.push({ type: BreedOptionState.Empty });
 }
 
 function withOptionRow(updater: (optionRow: BreedOptionRow, value: string) => BreedOptionRow) {
@@ -40,11 +46,11 @@ function withOptionRow(updater: (optionRow: BreedOptionRow, value: string) => Br
 
 function setBreedOption(optionRow: BreedOptionRow, value: string): BreedOptionRow {
   switch (optionRow.type) {
-    case 'EMPTY':
-    case 'BREED_SUB':
-      return { type: 'BREED_ALL', breed: value, count: 10 };
-    case 'BREED_ALL':
-      return { ...optionRow, type: 'BREED_ALL', breed: value };
+    case BreedOptionState.Empty:
+    case BreedOptionState.BreedSub:
+      return { type: BreedOptionState.BreedAll, breed: value, count: 10 };
+    case BreedOptionState.BreedAll:
+      return { ...optionRow, type: BreedOptionState.BreedAll, breed: value };
     default:
       assertExhaustive(optionRow);
   }
@@ -52,11 +58,11 @@ function setBreedOption(optionRow: BreedOptionRow, value: string): BreedOptionRo
 
 function setSubBreedOption(optionRow: BreedOptionRow, value: string): BreedOptionRow {
   switch (optionRow.type) {
-    case 'EMPTY':
+    case BreedOptionState.Empty:
       return optionRow;
-    case 'BREED_ALL':
-      return { ...optionRow, type: 'BREED_SUB', subBreed: value };
-    case 'BREED_SUB':
+    case BreedOptionState.BreedAll:
+      return { ...optionRow, type: BreedOptionState.BreedSub, subBreed: value };
+    case BreedOptionState.BreedSub:
       return { ...optionRow, subBreed: value };
     default:
       assertExhaustive(optionRow);
@@ -71,10 +77,10 @@ function setImageCountOption(optionRow: BreedOptionRow, value: string): BreedOpt
     return optionRow;
   }
   switch (optionRow.type) {
-    case 'EMPTY':
+    case BreedOptionState.Empty:
       return optionRow;
-    case 'BREED_ALL':
-    case 'BREED_SUB':
+    case BreedOptionState.BreedAll:
+    case BreedOptionState.BreedSub:
       return { ...optionRow, count };
     default:
       assertExhaustive(optionRow);
@@ -95,6 +101,6 @@ export const optionsSlice = createSlice({
 export const { addRow, setBreed, setSubBreed, setImageCount } = optionsSlice.actions;
 export const selectOptions = (state: RootState) => state.options;
 export function isEmpty(list: BreedOptionsState): boolean {
-  return list.length === 0 || (list.length === 1 && list[0].type === "EMPTY")
+  return list.length === 0 || (list.length === 1 && list[0].type === BreedOptionState.Empty)
 }
 export default optionsSlice.reducer

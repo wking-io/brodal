@@ -3,7 +3,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback, naiveErrorHandler } from './app/errors';
 
 import { Generator } from './features/generator/Generator';
-import './App.css';
 import { Documentation } from './features/documentation';
 
 function App() {

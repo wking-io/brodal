@@ -332,7 +332,7 @@ function Brodal() {
 
   const imageListPromise = useMemo(() => {
     return dispatch(fetchImageList(breedOptions));
-  }, [dispatch]);
+  }, [dispatch, breedOptions]);
 
   const imageListResource = useMemo<Resource<ImageList>>(() => ({
     read(): ImageList {
@@ -368,14 +368,14 @@ type ImageGridProps = {
   data: string[];
 }
 
-function ImageGrid<T>({ data }: ImageGridProps) {
+function ImageGrid({ data }: ImageGridProps) {
   const classes = useStyles();
   return (
     <div className={classes.gridWrapper}>
       <GridList cellHeight={160} cols={3}>
         {data.map((imageUrl) => (
           <GridListTile key={imageUrl} cols={1}>
-            <img src={imageUrl} alt="dog image" />
+            <img src={imageUrl} alt="dog breed" />
           </GridListTile>
         ))}
       </GridList>

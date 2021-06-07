@@ -17,7 +17,8 @@ import {
   Paper,
   Modal,
   GridListTile,
-  GridList
+  GridList,
+  Hidden
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
@@ -34,10 +35,12 @@ import { fetchImageList, selectImageList, ImageList } from './imageListSlice';
 import { toggleBrodal, selectShowBrodal } from './showBrodalSlice';
 import { assertExhaustive } from '../../utils/index';
 import { useSelector } from 'react-redux';
+import classes from '*.module.css';
 
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
+    flexDirection: 'column',
     marginTop: 48,
     alignItems: 'start',
     justifyContent: 'center',
@@ -48,14 +51,52 @@ const useStyles = makeStyles((theme) => ({
   },
   optionRow: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     padding: '16px 0',
     '&:not(:first-child)': {
       borderTop: `1px solid ${blueGrey[500]}`,
     }
   },
+  optionRowFields: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  option: {
+    width: '100%',
+    '&:not(:last-child)': {
+      flex: 1,
+    }
+  },
+  addRowButton: {
+    margin: '8px 0 0 0',
+  },
+  hideButton: {
+    display: 'none',
+  },
+  '@media screen and (min-width: 640px)': {
+    optionRow: {
+      flexDirection: 'row',
+    },
+    optionRowFields: {
+      flexDirection: 'row',
+    },
+    addRowButton: {
+      margin: '0 0 0 16px',
+    },
+    option: {
+      '&:last-child': {
+        maxWidth: 120,
+        flex: 'initial',
+      },
+    },
+    hideButton: {
+      display: 'block',
+      visibility: 'hidden',
+    },
+  },
   formControl: {
-    minWidth: 120,
     width: '100%',
   },
   selectEmpty: {
@@ -147,14 +188,14 @@ function OptionsListFallback() {
   return (
     <div>
       <div key="breed-loading-row" className={classes.optionRow}>
-        <Grid container spacing={3} alignItems="center" wrap='nowrap'>
-          <Grid style={{ flex: 1 }} item>
+        <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
+          <Grid className={classes.option} item>
             <OptionSelect label="Breed" disabled={true} />
           </Grid>
-          <Grid style={{ flex: 1 }} item>
+          <Grid className={classes.option} item>
             <OptionSelect label="Sub-breed" disabled={true} />
           </Grid>
-          <Grid item>
+          <Grid className={classes.option} item>
             <TextField
               id="breed-image-count"
               label="# of Images"
@@ -170,7 +211,7 @@ function OptionsListFallback() {
             />
           </Grid>
         </Grid>
-        <CircularProgress />
+        <CircularProgress style={{ marginLeft: 12 }} size={24} />
       </div>
     </div>
   );
@@ -186,7 +227,7 @@ function OptionsList({ data }: { data: BreedList }) {
       {breedOptions.map((optionRow, i, arr) => (
         <div key={`breed-${i}-row`} className={classes.optionRow}>
           <OptionRow data={data} row={optionRow} rowIndex={i} />
-          <IconButton style={{ marginLeft: 16, visibility: arr.length === (i + 1) ? 'visible' : 'hidden' }} aria-label="add row" disabled={optionRow.type === BreedOptionState.Empty} color="primary" onClick={() => dispatch(addRow())}>
+          <IconButton className={`${classes.addRowButton} ${arr.length !== (i + 1) ? classes.hideButton : ''}`} aria-label="add row" disabled={optionRow.type === BreedOptionState.Empty} color="primary" onClick={() => dispatch(addRow())}>
             <AddIcon />
           </IconButton>
         </div>
@@ -202,19 +243,20 @@ type OptionRowProps = {
 }
 
 function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
+  const classes = useStyles();
   const dispatch = useAppDispatch();
   // TODO: Make the fields responsive
   switch (row.type) {
     case BreedOptionState.Empty:
       return (
-        <Grid container spacing={3} alignItems="center" wrap='nowrap'>
-          <Grid style={{ flex: 1 }} item>
+        <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
+          <Grid className={classes.option} item>
             <OptionSelect options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} />
           </Grid>
-          <Grid style={{ flex: 1 }} item>
+          <Grid className={classes.option} item>
             <OptionSelect options={[]} disabled={true} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
           </Grid>
-          <Grid item>
+          <Grid className={classes.option} item>
             <TextField
               id="breed-image-count"
               label="# of Images"
@@ -227,7 +269,7 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
               onChange={({ target }) => dispatch(setImageCount({ value: target.value, index: rowIndex }))}
               value={0}
               size='small'
-              style={{ maxWidth: 100 }}
+              style={{ width: '100%' }}
             />
           </Grid>
         </Grid>
@@ -235,14 +277,14 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
 
     case BreedOptionState.BreedAll:
       return (
-        <Grid container spacing={3} alignItems="center" wrap='nowrap'>
-          <Grid style={{ flex: 1 }} item>
+        <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
+          <Grid className={classes.option} item>
             <OptionSelect options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
           </Grid>
-          <Grid style={{ flex: 1 }} item>
+          <Grid className={classes.option} item>
             <OptionSelect options={["all", ...data[row.breed]]} label="Sub-breed" value="all" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
           </Grid>
-          <Grid item>
+          <Grid className={classes.option} item>
             <TextField
               id="breed-image-count"
               label="# of Images"
@@ -254,7 +296,7 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
               onChange={({ target }) => dispatch(setImageCount({ value: target.value, index: rowIndex }))}
               value={row.count}
               size='small'
-              style={{ maxWidth: 100 }}
+              style={{ width: '100%' }}
             />
           </Grid>
         </Grid>
@@ -262,14 +304,14 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
 
     case BreedOptionState.BreedSub:
       return (
-        <Grid container spacing={3} alignItems="center" wrap='nowrap'>
-          <Grid style={{ flex: 1 }} item>
+        <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
+          <Grid className={classes.option} item>
             <OptionSelect options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
           </Grid>
-          <Grid style={{ flex: 1 }} item>
+          <Grid className={classes.option} item>
             <OptionSelect options={["all", ...data[row.breed]]} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} value={row.subBreed} />
           </Grid>
-          <Grid item>
+          <Grid className={classes.option} item>
             <TextField
               id="breed-image-count"
               label="# of Images"
@@ -281,7 +323,7 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
               onChange={({ target }) => dispatch(setImageCount({ value: target.value, index: rowIndex }))}
               value={row.count}
               size='small'
-              style={{ maxWidth: 100 }}
+              style={{ width: '100%' }}
             />
           </Grid>
         </Grid>

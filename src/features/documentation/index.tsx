@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#fff',
     marginTop: 48,
     opacity: 0.75,
+    paddingBottom: 48,
   }
 }));
 

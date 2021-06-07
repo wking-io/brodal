@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { xonokai as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 // Material UI
-import { Container, Typography } from '@material-ui/core';
+import { Container, Typography, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +21,7 @@ export function Documentation() {
   return (
     <Container maxWidth="sm" className={classes.container}>
       <Typography style={{ fontWeight: 'bold' }} variant="h4" component="h2">Documentation</Typography>
-      <p style={{ lineHeight: 1.6 }}>You can absolutely crawl through the codebase, but I thought it would be a little easier to review if I called out a few key areas and explained my thought process.</p>
+      <p style={{ lineHeight: 1.6 }}>You can absolutely crawl through the <Link href="https://github.com/wking-io/brodal" target="_blank" rel="noopener noreferrer">codebase</Link>, but I thought it would be a little easier to review if I called out a few key areas and explained my thought process.</p>
       <Typography style={{ fontWeight: 'bold', marginTop: 40 }} variant="h5" component="h3">Architecture</Typography>
       <p style={{ lineHeight: 1.6 }}>Okay, that feels a little pretentious sounding for the size of the project, buuut I did make some conscious decisions around "architecture" related items. I made decisions based on two factors:</p>
       <ol>
@@ -93,18 +93,63 @@ function setBreedOption(optionRow: BreedOptionRow, value: string): BreedOptionRo
   </React.Suspense>
 </ErrorBoundary>`} />
       <Typography style={{ fontWeight: 'bold', marginTop: 40 }} variant="h5" component="h3">Suspense</Typography>
-      <p style={{ lineHeight: 1.6 }}><strong>Generator Options Level</strong></p>
-      <p style={{ lineHeight: 1.6 }}></p>
-      <p style={{ lineHeight: 1.6 }}><strong>ImageList Level</strong></p>
-      <p style={{ lineHeight: 1.6 }}></p>
+      <p style={{ lineHeight: 1.6 }}>Really enjoyed working with Suspense. I decided to just roll my own simple wrapper around the calls so that I could show a Higher Order Component that would use the API expected from the Suspense component. I did this using the code below to build a <code>withResource</code> HOC. It can then be used to extend components that are expecting data without them having to care about the exact implementation of how that data is read.</p>
+      <CodeBlock code={`const withResource = (Component: React.ElementType) => <T,>({ resource, ...props }: { resource: Resource<T> }) => {
+  const data = resource.read();
+  return (<Component data={data} {...props} />);
+}
+
+const BreedOptionsList = withResource(OptionsList);
+const BreedImageGrid = withResource(ImageGrid);
+
+function OptionsList({ data }: { data: BreedList }) {
+  const classes = useStyles();
+  const dispatch = useAppDispatch();
+  const breedOptions = useAppSelector(selectOptions);
+
+  return (
+    <div>
+      {breedOptions.map((optionRow, i, arr) => (
+        <div key={\`breed-\${i}-row\`} className={classes.optionRow}>
+          <OptionRow data={data} row={optionRow} rowIndex={i} />
+          <IconButton style={{ marginLeft: 16, visibility: arr.length === (i + 1) ? 'visible' : 'hidden' }} aria-label="add row" disabled={optionRow.type === BreedOptionState.Empty} color="primary" onClick={() => dispatch(addRow())}>
+            <AddIcon />
+          </IconButton>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ImageGrid({ data }: { data: string[] }) {
+  const classes = useStyles();
+  return (
+    <div className={classes.gridWrapper}>
+      <GridList cellHeight={160} cols={3}>
+        {data.map((imageUrl) => (
+          <GridListTile key={imageUrl} cols={1}>
+            <img src={imageUrl} alt="dog breed" />
+          </GridListTile>
+        ))}
+      </GridList>
+    </div>
+  );
+}`} />
       <Typography style={{ fontWeight: 'bold', marginTop: 40 }} variant="h5" component="h3">UI & Components</Typography>
-      <p style={{ lineHeight: 1.6 }}>This is one of the areas where I decided to lean more towards the "build as if this were in a codebase that would scale" side.</p>
+      <p style={{ lineHeight: 1.6 }}>This is one of the areas where I decided to lean more towards the "it is a small one-off focus on speed" side. I didn't separate components out into their own files. I don't have a problem doing that, but just didn't care to in this case.</p>
+      <p style={{ lineHeight: 1.6 }}>Reading the <code>src/features/Generator.tsx</code> file will give you the best idea of how it all was built, but to call out just a couple areas of UX:</p>
+      <ul>
+        <li style={{ marginTop: 8, lineHeight: 1.6 }}>Added number field limits on both the input itself and in the reducer. These limits are based on what the Dog API has documented.</li>
+        <li style={{ marginTop: 8, lineHeight: 1.6 }}>Disabled row addition if in <code>Suspense</code> or if in the <code>Empty</code> state.</li>
+      </ul>
       <Typography style={{ fontWeight: 'bold', marginTop: 40 }} variant="h5" component="h3">What I didn't do, but would do with more time.</Typography>
       <p style={{ lineHeight: 1.6 }}><strong>Better UX around <code>ErrorBoundary</code>(s)</strong></p>
       <p style={{ lineHeight: 1.6 }}>The app level ErrorBoundary would communicate that the App had an error and give the option to refresh the app or contact customer support.</p>
       <p style={{ lineHeight: 1.6 }}>The image modal ErrorBoundary would communicate that there was an error and that they could either try the request again or go back to the generator options.</p>
       <p style={{ lineHeight: 1.6 }}><strong>Add Concurrent mode support.</strong></p>
       <p style={{ lineHeight: 1.6 }}>As I talked about in the section on the Suspense implementation I didn't add in concurrent mode or the primitives that assist in making sure the app UX is smoother in regards to loading states.</p>
+      <p style={{ lineHeight: 1.6 }}><strong>Add better UX and design to the modal.</strong></p>
+      <p style={{ lineHeight: 1.6 }}>I left it with the default behavior from the Material Component, but would probably add an addition close button for accessibility purposes, and try and clean up the modal to be nicer than just a box with a grid of images. Not sure how, but it feels a little plain.</p>
       <p style={{ lineHeight: 1.6 }}><strong>Parsed the image strings to get more accessible alt text</strong></p>
       <p style={{ lineHeight: 1.6 }}>The API did not have any image metadata so I would have parsed the image strings to pull out which breed the image was of to help with having more descriptive alt text for accessibility.</p>
     </Container>

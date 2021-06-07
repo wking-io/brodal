@@ -363,11 +363,7 @@ function Brodal() {
   )
 }
 
-type ImageGridProps = {
-  data: string[];
-}
-
-function ImageGrid({ data }: ImageGridProps) {
+function ImageGrid({ data }: { data: string[] }) {
   const classes = useStyles();
   return (
     <div className={classes.gridWrapper}>

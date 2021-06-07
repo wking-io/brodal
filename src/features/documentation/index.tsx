@@ -2,7 +2,7 @@ import React from 'react';
 
 // Code Highlighter
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { xonokai as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { xonokai as dark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 // Material UI
 import { Container, Typography, Link } from '@material-ui/core';
@@ -150,8 +150,8 @@ function ImageGrid({ data }: { data: string[] }) {
       <p style={{ lineHeight: 1.6 }}>As I talked about in the section on the Suspense implementation I didn't add in concurrent mode or the primitives that assist in making sure the app UX is smoother in regards to loading states.</p>
       <p style={{ lineHeight: 1.6 }}><strong>Add better UX and design to the modal.</strong></p>
       <p style={{ lineHeight: 1.6 }}>I left it with the default behavior from the Material Component, but would probably add an addition close button for accessibility purposes, and try and clean up the modal to be nicer than just a box with a grid of images. Not sure how, but it feels a little plain.</p>
-      <p style={{ lineHeight: 1.6 }}><strong>Add tests for async reducers</strong></p>
-      <p style={{ lineHeight: 1.6 }}>I am sure this is not incredibly hard, but I just didn't have the time to look into this.</p>
+      <p style={{ lineHeight: 1.6 }}><strong>Add more tests and tests for async reducers</strong></p>
+      <p style={{ lineHeight: 1.6 }}>I didn't want to keep pushing back the date I delivered so there are not as many tests as I would have liked. As for async testing, I am sure this is not incredibly hard, but I just didn't have the time to look into this.</p>
       <p style={{ lineHeight: 1.6 }}><strong>Parsed the image strings to get more accessible alt text</strong></p>
       <p style={{ lineHeight: 1.6 }}>The API did not have any image metadata so I would have parsed the image strings to pull out which breed the image was of to help with having more descriptive alt text for accessibility.</p>
     </Container>

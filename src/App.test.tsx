@@ -11,5 +11,5 @@ test('renders Documentation heading', () => {
     </Provider>
   );
 
-  expect(getByText(/Documentation/i)).toBeInTheDocument();
+  expect(getByText("The Brodal")).toBeInTheDocument();
 });

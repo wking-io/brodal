@@ -245,16 +245,15 @@ type OptionRowProps = {
 function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
   const classes = useStyles();
   const dispatch = useAppDispatch();
-  // TODO: Make the fields responsive
   switch (row.type) {
     case BreedOptionState.Empty:
       return (
         <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
           <Grid className={classes.option} item>
-            <OptionSelect options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} />
+            <OptionSelect formKey={`breed-${rowIndex}`} options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} />
           </Grid>
           <Grid className={classes.option} item>
-            <OptionSelect options={[]} disabled={true} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
+            <OptionSelect formKey={`breed-${rowIndex}`} options={[]} disabled={true} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
           </Grid>
           <Grid className={classes.option} item>
             <TextField
@@ -279,10 +278,10 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
       return (
         <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
           <Grid className={classes.option} item>
-            <OptionSelect options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
+            <OptionSelect formKey={`breed-${rowIndex}`} options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
           </Grid>
           <Grid className={classes.option} item>
-            <OptionSelect options={["all", ...data[row.breed]]} label="Sub-breed" value="all" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
+            <OptionSelect formKey={`sub-breed-${rowIndex}`} options={["all", ...data[row.breed]]} label="Sub-breed" value="all" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} />
           </Grid>
           <Grid className={classes.option} item>
             <TextField
@@ -306,10 +305,10 @@ function OptionRow({ data = {}, row, rowIndex }: OptionRowProps) {
       return (
         <Grid className={classes.optionRowFields} container spacing={3} alignItems="center" wrap='nowrap'>
           <Grid className={classes.option} item>
-            <OptionSelect options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
+            <OptionSelect formKey={`breed-${rowIndex}`} options={Object.keys(data)} label="Breed" handleChange={(value: string) => dispatch(setBreed({ value, index: rowIndex }))} value={row.breed} />
           </Grid>
           <Grid className={classes.option} item>
-            <OptionSelect options={["all", ...data[row.breed]]} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} value={row.subBreed} />
+            <OptionSelect formKey={`sub-breed-${rowIndex}`} options={["all", ...data[row.breed]]} label="Sub-breed" handleChange={(value: string) => dispatch(setSubBreed({ value, index: rowIndex }))} value={row.subBreed} />
           </Grid>
           <Grid className={classes.option} item>
             <TextField
@@ -343,15 +342,16 @@ type OptionSelectProps = {
   disabled?: boolean;
 }
 
-function OptionSelect({ formKey = 'new', handleChange = () => { }, options = [], label, value = '', disabled = false }: OptionSelectProps) {
+export function OptionSelect({ formKey = 'new', handleChange = () => { }, options = [], label, value = '', disabled = false }: OptionSelectProps) {
   const classes = useStyles();
   return (
     <FormControl variant="outlined" className={classes.formControl} disabled={disabled}
       size='small'>
-      <InputLabel id={`breed-${formKey}-label`}>{label}</InputLabel>
+      <InputLabel id={`${formKey}-label`}>{label}</InputLabel>
       <Select
-        labelId={`breed-${formKey}-label`}
-        id={`breed-${formKey}`}
+        labelId={`${formKey}-label`}
+        data-testid={`select-${formKey}`}
+        id={`${formKey}`}
         value={value}
         onChange={(event: ChangeEvent<{ value: unknown }>) => handleChange(event.target.value as string)}
         label={label}

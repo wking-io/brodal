@@ -39,7 +39,7 @@ export function Documentation() {
       <p style={{ lineHeight: 1.6 }}><em>PS - Love static types and using them helps a lot with this issue by enforcing the contracts across the call sites.</em></p>
       <Typography style={{ fontWeight: 'bold', marginTop: 40 }} variant="h5" component="h3">Impossible States</Typography>
       <p style={{ lineHeight: 1.6 }}>This is one of my favorite mantras and being able to leverage static types using Typescript was nice. This is my first experience using Typescript, but I am very familiar with static typing having used Elm in the past quite a bit.</p>
-      <p style={{ lineHeight: 1.6 }}>I didn't identify every single case that I could have made sure types didn't allow for an impossible state, but I focused on two cases where I felt it mattered most.</p>
+      <p style={{ lineHeight: 1.6 }}>I didn't identify every single case that I could have made an impossible state impossible using types, but I focused on two cases where I felt it mattered most.</p>
       <p style={{ lineHeight: 1.6 }}><strong>OptionRow</strong></p>
       <p style={{ lineHeight: 1.6 }}>By defining the three different states a row of options could be in using an Enum this allows us to more explicitly set the interactions the UI has available to each state.</p>
       <CodeBlock code={`// Enum used to define the breed options
